@@ -1,19 +1,19 @@
-import { Text, View } from "react-native";
+import { useTheme } from "@/contexts/ThemeProvider";
+import { Pressable, Text, View } from "react-native";
 
 export default function Index() {
+  const { toggleTheme } = useTheme(); // Ensure the theme context is used
   return (
-    <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-2xl font-bold text-blue-600 mb-4">
-        Welcome to NativeWind!
+    <View className="flex-1 justify-center items-center bg-background">
+      <Text className="text-primary-foreground text-xl">
+        Welcome to the Home Page!
       </Text>
-      <Text className="text-lg text-gray-700 text-center px-4">
-        Edit app/index.tsx to edit this screen.
-      </Text>
-      <View className="mt-6 px-6 py-3 bg-blue-500 rounded-lg">
-        <Text className="text-white font-semibold">
-          NativeWind is working! 🎉
-        </Text>
-      </View>
+      <Pressable
+        onPress={toggleTheme}
+        className="mt-4 px-4 py-2 bg-primary rounded"
+      >
+        <Text className="text-primary-foreground">Toggle Theme</Text>
+      </Pressable>
     </View>
   );
 }
