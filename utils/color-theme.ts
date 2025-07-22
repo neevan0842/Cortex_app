@@ -1,16 +1,22 @@
+import { clsx, type ClassValue } from "clsx";
 import { vars } from "nativewind";
+import { twMerge } from "tailwind-merge";
 
 export const themes = {
   light: vars({
-    "--color-primary": "#000000",      // black
-    "--color-secondary": "rgba(0, 0, 0, 0.1)",    // gray-500
-    "--color-background": "#ffffff",   // white
-    "--color-text": "#000000",         // black text
+    "--color-primary": "#000000", // black
+    "--color-secondary": "rgba(0, 0, 0, 0.1)", // gray-500
+    "--color-background": "#ffffff", // white
+    "--color-text": "#000000", // black text
   }),
   dark: vars({
-    "--color-primary": "#ffffff",      // white
-    "--color-secondary": "rgba(255, 255, 255, 0.2)",    // gray-400
-    "--color-background": "#000000",   // black
-    "--color-text": "#ffffff",         // white text
+    "--color-primary": "#ffffff", // white
+    "--color-secondary": "rgba(255, 255, 255, 0.2)", // gray-400
+    "--color-background": "#000000", // black
+    "--color-text": "#ffffff", // white text
   }),
-}; 
+};
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
