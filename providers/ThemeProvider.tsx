@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { colorScheme } from 'nativewind';
@@ -26,7 +26,21 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const toggleTheme = () => {
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
     setCurrentTheme(newTheme);
-    colorScheme.set(newTheme);
+    
+    // Try to set the color scheme
+    try {
+      colorScheme.set(newTheme);
+    } catch (error) {
+      console.warn('Failed to set color scheme:', error);
+      // Fallback: manually update the document class for web
+      if (typeof document !== 'undefined') {
+        if (newTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+    }
   };
 
   return (
