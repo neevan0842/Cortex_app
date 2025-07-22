@@ -1,7 +1,7 @@
 import { cn } from "@/utils/color-theme";
 import { Tabs } from "expo-router";
 import React from "react";
-import { Text, View, Pressable } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import { useTheme } from "../../providers/ThemeProvider";
 
@@ -44,24 +44,30 @@ function TabBarIcon({
 }
 
 export default function TabLayout() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
   return (
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
         headerShown: false,
         tabBarStyle: {
-          borderTopColor: "#0061FF1A",
           height: 60,
+          backgroundColor: isDark ? "#252525" : "#FFFFFF", // Dynamic background
         },
-        tabBarActiveTintColor: 'transparent',
-        tabBarInactiveTintColor: 'transparent',
+        tabBarActiveTintColor: "transparent",
+        tabBarInactiveTintColor: "transparent",
         tabBarButton: (props) => {
           const { children, onPress, accessibilityState, ...restProps } = props;
           return (
             <Pressable
               onPress={onPress}
-              style={[restProps.style, { backgroundColor: 'transparent', flex: 1 }]}
-              android_ripple={{ color: 'transparent' }}
+              style={[
+                restProps.style,
+                { backgroundColor: "transparent", flex: 1 },
+              ]}
+              android_ripple={{ color: "transparent" }}
             >
               {children}
             </Pressable>
