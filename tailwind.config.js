@@ -7,15 +7,22 @@ module.exports = {
     "./providers/**/*.{js,ts,tsx}",
     "./utils/**/*.{js,ts,tsx}",
   ],
-  darkMode: 'class',
+  darkMode: "class",
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
       colors: {
         primary: "var(--color-primary)",
-        secondary: "var(--color-secondary)",
+        "primary-foreground": "var(--color-primary-foreground)",
         background: "var(--color-background)",
-        text: "var(--color-text)",
+        foreground: "var(--color-foreground)",
+        muted: "var(--color-muted)",
+        "muted-foreground": "var(--color-muted-foreground)",
+        border: "var(--color-border)",
+
+        // --- Custom App-Specific Colors (Preserved) ---
+        "talk-listening": "var(--color-talk-listening)",
+        "talk-ai": "var(--color-talk-ai)",
       },
     },
   },

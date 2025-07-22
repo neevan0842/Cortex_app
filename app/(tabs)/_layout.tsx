@@ -3,6 +3,7 @@ import { Tabs } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
+import { useTheme } from "../../providers/ThemeProvider";
 
 // Reusable TabBarIcon component
 function TabBarIcon({
@@ -14,21 +15,26 @@ function TabBarIcon({
   label: string;
   focused: boolean;
 }) {
+  const { theme } = useTheme();
+
+  // Get theme-aware colors
+  const iconColor = focused
+    ? theme === "dark"
+      ? "#EBEBEB"
+      : "#343434" // primary color
+    : theme === "dark"
+      ? "#B5B5B5"
+      : "#8E8E8E"; // muted-foreground color
+
   return (
-    <View className="flex items-center justify-center w-20 mt-4">
-      <Icon
-        name={iconName}
-        size={22}
-        className={cn(
-          "flex items-center justify-center",
-          focused ? "text-primary" : "text-secondary"
-        )}
-      />
+    <View className="flex flex-col items-center justify-center w-20 h-full mt-5">
+      <Icon name={iconName} size={22} color={iconColor} />
       <Text
         numberOfLines={1}
         className={cn(
-          "text-xs font-medium mt-1",
-          focused ? "text-primary" : "text-text"
+          focused
+            ? "text-primary font-bold"
+            : "text-muted-foreground font-medium text-sm"
         )}
       >
         {label}
@@ -44,7 +50,8 @@ export default function TabLayout() {
         tabBarShowLabel: false,
         headerShown: false,
         tabBarStyle: {
-          height: 55,
+          borderTopColor: "#0061FF1A",
+          height: 60,
         },
       }}
     >
