@@ -380,7 +380,7 @@ const HomeScreen = () => {
 
     const newMessage = {
       id: messages.length + 1,
-      message: inputValue,
+      message: inputValue.trim(),
       isUser: true,
       timestamp: getCurrentTime(),
     };
