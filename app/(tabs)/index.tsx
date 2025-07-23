@@ -222,7 +222,7 @@ function ChatInput({ inputValue, onInputChange, onSend }: ChatInputProps) {
   };
 
   return (
-    <View className="p-4 border-t border-border bg-background pb-8">
+    <View className="p-4 border-t border-border bg-background pb-6">
       <View className="flex-row items-center gap-3 p-3 rounded-2xl bg-muted/30 border border-border/50">
         <Pressable>
           <Icon name="paperclip" size={20} color="#8E8E8E" />
@@ -457,20 +457,21 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-        className="flex-1"
-      >
-        <View className="flex-1">
-          {/* Common Header */}
-          <Header
-            mode={mode}
-            onModeSwitch={toggleMode}
-            conversationState={mode === "talk" ? conversationState : undefined}
-          />
+      <View className="flex-1">
+        {/* Common Header */}
+        <Header
+          mode={mode}
+          onModeSwitch={toggleMode}
+          conversationState={mode === "talk" ? conversationState : undefined}
+        />
 
-          {/* Common Message Area */}
+        {/* Common Message Area */}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 20}
+          // Adjust this offset if you have a header
+        >
           <MessageArea
             messages={messages}
             isTyping={isTyping}
@@ -493,8 +494,8 @@ const HomeScreen = () => {
               onMicrophoneAction={handleMicrophoneAction}
             />
           )}
-        </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 };
