@@ -17,10 +17,10 @@ export default function ToggleSwitch({
   value,
   onValueChange,
 }: ToggleSwitchProps) {
-  const translateX = useSharedValue(value ? 26 : 5);
+  const translateX = useSharedValue(value ? 28 : 4);
 
   React.useEffect(() => {
-    translateX.value = withSpring(value ? 26 : 5, {
+    translateX.value = withSpring(value ? 28 : 4, {
       damping: 30,
       stiffness: 500,
     });
