@@ -1,3 +1,4 @@
+import "dotenv/config";
 import * as readline from "readline";
 import { v4 as uuidv4 } from "uuid";
 import { agent } from "./agents";
@@ -63,7 +64,7 @@ function displayWelcome() {
   console.log(`${colors.yellow}Welcome to Cortex CLI Chat!${colors.reset}`);
   console.log(`${colors.dim}Session ID: ${sessionId}${colors.reset}`);
   console.log(
-    `${colors.dim}🔍 LangSmith Tracking: ${process.env.LANGCHAIN_TRACING_V2 === "true" ? "Enabled" : "Disabled"}${colors.reset}`
+    `${colors.dim}🔍 LangSmith Tracking: ${process.env.EXPO_PUBLIC_LANGCHAIN_TRACING_V2 === "true" ? "Enabled" : "Disabled"}${colors.reset}`
   );
   console.log(
     `${colors.dim}Type your message and press Enter to chat.${colors.reset}`
@@ -143,7 +144,7 @@ async function startChat() {
             break;
           case "/langsmith":
             const projectName =
-              process.env.LANGCHAIN_PROJECT || "cortex-cli-chat";
+              process.env.EXPO_PUBLIC_LANGCHAIN_PROJECT || "cortex-cli-chat";
             displayMessage(
               "system",
               `🔍 LangSmith Dashboard: https://smith.langchain.com/projects/p/${projectName}\n📊 Session ID: ${sessionId}\n💡 View your conversation traces and agent performance metrics.`

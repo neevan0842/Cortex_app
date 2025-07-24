@@ -1,28 +1,27 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatGroq } from "@langchain/groq";
-import "dotenv/config";
 
 const groqLlama8bModel = new ChatGroq({
-  apiKey: process.env.GROQ_API_KEY,
+  apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY,
   model: "llama-3.1-8b-instant",
   temperature: 0,
   maxRetries: 2,
 });
 
 const groqLlama70bModel = new ChatGroq({
-  apiKey: process.env.GROQ_API_KEY,
+  apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY,
   model: "llama-3.3-70b-versatile",
   temperature: 0,
   maxRetries: 2,
 });
 
 const geminiProModel = new ChatGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_API_KEY,
+  apiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY,
   model: "gemini-2.5-pro",
 });
 
 const geminiFlashModel = new ChatGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_API_KEY,
+  apiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY,
   model: "gemini-2.5-flash-lite",
 });
 
