@@ -266,6 +266,7 @@ interface TalkInputProps {
 }
 
 function TalkInput({ conversationState, onMicrophoneAction }: TalkInputProps) {
+  const { theme } = useTheme();
   const getButtonIcon = () => {
     switch (conversationState) {
       case "ready":
@@ -326,7 +327,11 @@ function TalkInput({ conversationState, onMicrophoneAction }: TalkInputProps) {
             getButtonStyle()
           )}
         >
-          <Icon name={getButtonIcon()} size={24} color="#FAFAFA" />
+          <Icon
+            name={getButtonIcon()}
+            size={24}
+            color={theme === "dark" ? "#1A1A1A" : "#FAFAFA"}
+          />
         </Pressable>
       </View>
 
