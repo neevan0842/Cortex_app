@@ -7,4 +7,18 @@ RESPONSE STYLE:
 - Always be accurate and cite sources when relevant
 `;
 
+export const getPromptByName = (name: string): string => {
+  switch (name) {
+    case PromptNames.SYSTEM_PROMPT:
+      return systemPrompt;
+    default:
+      return systemPrompt;
+  }
+};
+
+export enum PromptNames {
+  DEFAULT = "system_prompt",
+  SYSTEM_PROMPT = "system_prompt",
+}
+
 export { systemPrompt };

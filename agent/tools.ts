@@ -54,4 +54,22 @@ const calculatorTool = tool(
   }
 );
 
+export function getToolsByNames(toolNames: string[]): any[] {
+  const tools: any[] = [];
+  toolNames.forEach((name) => {
+    switch (name) {
+      case ToolNames.CALCULATOR:
+        tools.push(calculatorTool);
+        break;
+      default:
+        console.warn(`Tool ${name} not found`);
+    }
+  });
+  return tools;
+}
+
+export enum ToolNames {
+  CALCULATOR = "calculator",
+}
+
 export { calculatorTool };
