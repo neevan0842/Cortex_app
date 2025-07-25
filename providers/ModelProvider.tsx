@@ -71,7 +71,13 @@ export const ModelProvider = ({ children }: ModelProviderProps) => {
         return "Error: LLM is not initialized";
       }
 
-      const currentPrompt = getPromptByName(prompt);
+      const currentPrompt = await getPromptByName(prompt);
+      console.log(
+        "Generating response with model:",
+        model,
+        "and prompt:",
+        currentPrompt
+      );
       const response = await llm.invoke([
         { role: "system", content: currentPrompt },
         { role: "user", content: message.trim() },
