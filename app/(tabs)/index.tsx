@@ -1,3 +1,4 @@
+import { useAgent } from "@/providers/ModelProvider";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Keyboard,
@@ -6,7 +7,6 @@ import {
   Pressable,
   ScrollView,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import Animated, {
@@ -232,6 +232,8 @@ type Message = {
 
 const HomeScreen = () => {
   const [mode, setMode] = useState<"chat" | "talk">("chat");
+  const [fontSize, setFontSize] = useState(15);
+  const { generateLLMResponse } = useAgent();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -260,7 +262,7 @@ const HomeScreen = () => {
     setMode(mode === "chat" ? "talk" : "chat");
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!inputValue.trim()) return;
 
     const newMessage = {
@@ -275,18 +277,14 @@ const HomeScreen = () => {
     setIsTyping(true);
     Keyboard.dismiss();
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse = {
-        id: messages.length + 2,
-        message:
-          "I understand! Let me help you with that. Here's what I can suggest...",
-        isUser: false,
-        timestamp: getCurrentTime(),
-      };
-      setMessages((prev) => [...prev, aiResponse]);
-      setIsTyping(false);
-    }, 2000);
+    const aiResponse = {
+      id: messages.length + 2,
+      message: await generateLLMResponse(inputValue.trim()),
+      isUser: false,
+      timestamp: getCurrentTime(),
+    };
+    setMessages((prev) => [...prev, aiResponse]);
+    setIsTyping(false);
   };
 
   const handleMicrophoneAction = () => {
@@ -360,7 +358,7 @@ const HomeScreen = () => {
           <MessageArea
             messages={messages}
             isTyping={isTyping}
-            fontSize={16}
+            fontSize={fontSize}
             mode={mode}
             currentTranscript={currentTranscript}
             conversationState={conversationState}
@@ -372,6 +370,7 @@ const HomeScreen = () => {
               inputValue={inputValue}
               onInputChange={setInputValue}
               onSend={handleSend}
+              fontSize={fontSize}
             />
           ) : (
             <TalkInput

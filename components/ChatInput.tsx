@@ -8,9 +8,15 @@ interface ChatInputProps {
   inputValue: string;
   onInputChange: (value: string) => void;
   onSend: () => void;
+  fontSize?: number;
 }
 
-const ChatInput = ({ inputValue, onInputChange, onSend }: ChatInputProps) => {
+const ChatInput = ({
+  inputValue,
+  onInputChange,
+  onSend,
+  fontSize = 16,
+}: ChatInputProps) => {
   const { theme } = useTheme();
 
   // Get theme-aware colors for send button icon
@@ -38,6 +44,7 @@ const ChatInput = ({ inputValue, onInputChange, onSend }: ChatInputProps) => {
           className="flex-1 text-foreground text-base"
           multiline
           returnKeyType="send"
+          style={{ fontSize }}
           blurOnSubmit={false}
         />
 

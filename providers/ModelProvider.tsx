@@ -1,25 +1,14 @@
 import { getModelByName, ModelNames } from "@/agent/model";
 import { getPromptByName, PromptNames } from "@/agent/prompt";
-import { getToolsByNames } from "@/agent/tools";
-import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 type ModelContextType = {
-  agent: any; // TODO
   model: string;
-  toolNames: string[];
   prompt: string;
-  buildAgent: () => Promise<void>;
   setModel: (model: string) => void;
-  setToolNames: (toolNames: string[]) => void;
   setPrompt: (prompt: string) => void;
+  generateLLMResponse: (messages: string) => Promise<string>;
 };
 
 interface ModelProviderProps {
@@ -27,99 +16,87 @@ interface ModelProviderProps {
 }
 
 export const ModelContext = createContext<ModelContextType>({
-  agent: null,
   model: ModelNames.DEFAULT,
-  toolNames: [],
   prompt: PromptNames.DEFAULT,
-  buildAgent: async () => {},
   setModel: () => {},
-  setToolNames: () => {},
   setPrompt: () => {},
+  generateLLMResponse: () => Promise.resolve(""),
 });
 
 export const ModelProvider = ({ children }: ModelProviderProps) => {
-  const [agent, setAgent] = useState<any>(null); // TODO: Define agent type
+  const [llm, setLLM] = useState<any>(null); // TODO: Define llm type
   const [model, setModel] = useState<string>(ModelNames.DEFAULT);
-  const [toolNames, setToolNames] = useState<string[]>([]);
   const [prompt, setPrompt] = useState<string>(PromptNames.DEFAULT);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Load data from storage on app start
   useEffect(() => {
     const loadData = async () => {
       try {
+        setIsLoading(true);
         const savedModel = await AsyncStorage.getItem("model");
-        const savedToolNamesString = await AsyncStorage.getItem("toolNames");
         const savedPrompt = await AsyncStorage.getItem("prompt");
 
-        // Parse toolNames safely
-        let parsedToolNames: string[] = [];
-        if (savedToolNamesString) {
-          try {
-            parsedToolNames = JSON.parse(savedToolNamesString);
-            if (!Array.isArray(parsedToolNames)) {
-              parsedToolNames = [];
-            }
-          } catch (error) {
-            console.warn("Failed to parse saved toolNames:", error);
-            parsedToolNames = [];
-          }
-        }
-
         setModel(savedModel || ModelNames.DEFAULT);
-        setToolNames(parsedToolNames);
         setPrompt(savedPrompt || PromptNames.DEFAULT);
+        console.log("loaded model:", savedModel, "prompt:", savedPrompt);
       } catch (error) {
         console.error("Error loading model:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     loadData();
   }, []);
 
-  const buildAgent = useCallback(async () => {
-    try {
-      // Only build if we have valid state
-      if (!model || !prompt) {
-        console.warn("Cannot build agent: missing model or prompt");
-        return;
-      }
-
-      const llm = getModelByName(model);
-      const tools = getToolsByNames(toolNames);
-      const promptTemplate = getPromptByName(prompt);
-
-      // Save to storage
+  useEffect(() => {
+    const updateModel = async () => {
+      setIsLoading(true);
+      const modelInstance = getModelByName(model);
       await AsyncStorage.setItem("model", model);
-      await AsyncStorage.setItem("toolNames", JSON.stringify(toolNames));
-      await AsyncStorage.setItem("prompt", prompt);
-
-      const currentAgent = createReactAgent({
-        llm: llm,
-        tools: tools,
-        prompt: promptTemplate,
-      });
-
-      setAgent(currentAgent);
-    } catch (error) {
-      console.error("Error building agent:", error);
-    }
-  }, [model, toolNames, prompt]);
+      setLLM(modelInstance);
+      console.log("ModelProvider - updating model:", model);
+      setIsLoading(false);
+    };
+    updateModel();
+  }, [model]);
 
   useEffect(() => {
-    buildAgent();
-  }, [buildAgent]);
+    const updatePrompt = async () => {
+      await AsyncStorage.setItem("prompt", prompt);
+      console.log("ModelProvider - updating prompt:", prompt);
+    };
+    updatePrompt();
+  }, [prompt]);
 
-  return (
+  const generateLLMResponse = async (message: string): Promise<string> => {
+    try {
+      if (!llm) {
+        console.error("LLM is not initialized");
+        return "Error: LLM is not initialized";
+      }
+
+      const currentPrompt = getPromptByName(prompt);
+      const response = await llm.invoke([
+        { role: "system", content: currentPrompt },
+        { role: "user", content: message.trim() },
+      ]);
+      return response.content;
+    } catch (error) {
+      console.error("Error generating LLM response:", error);
+      return "Error generating response";
+    }
+  };
+
+  return isLoading ? null : (
     <ModelContext.Provider
       value={{
-        agent,
         model,
-        toolNames,
         prompt,
-        buildAgent,
         setModel,
-        setToolNames,
         setPrompt,
+        generateLLMResponse,
       }}
     >
       {children}
@@ -129,8 +106,5 @@ export const ModelProvider = ({ children }: ModelProviderProps) => {
 
 export const useAgent = () => {
   const context = useContext(ModelContext);
-  if (!context) {
-    throw new Error("useAgent must be used within a ModelProvider");
-  }
   return context;
 };
