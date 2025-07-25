@@ -45,24 +45,21 @@ const Tools = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: isDropdownOpen ? 200 : 20 }}
-      >
-        <View className="p-6">
-          {/* Header */}
-          <View className="mb-6">
-            <Text className="text-3xl font-bold text-foreground mb-2">
-              Preferences
-            </Text>
-            <Text className="text-base text-muted-foreground">
-              Customize your AI companion's capabilities
-            </Text>
-          </View>
+      <View className="flex-1">
+        {/* Header */}
+        <View className="px-6 pt-8 pb-6">
+          <Text className="text-3xl font-bold text-foreground mb-2">
+            Preferences
+          </Text>
+          <Text className="text-base text-muted-foreground">
+            Customize your AI companion's capabilities
+          </Text>
+        </View>
 
+        {/* Content */}
+        <View className="flex-1 px-6">
           {/* Model Settings Section */}
-          <View className="mb-6">
+          <View className="mb-8">
             <Text className="text-xl font-semibold text-foreground mb-4">
               Select Model
             </Text>
@@ -70,14 +67,14 @@ const Tools = () => {
             <View className="relative">
               <Pressable
                 onPress={toggleDropdown}
-                className="p-4 rounded-2xl bg-muted/40 border border-border/50 flex-row items-center justify-between"
+                className="flex-row items-center justify-between p-4 rounded-2xl bg-muted-foreground/40 border border-border"
               >
                 <View className="flex-row items-center flex-1">
-                  <View className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 items-center justify-center mr-4">
-                    <Icon name="cpu" size={18} color="#343434" />
+                  <View className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center mr-2">
+                    <Icon name="cpu" size={20} color="#343434" />
                   </View>
                   <View className="flex-1">
-                    <Text className="font-medium text-foreground text-base mb-1">
+                    <Text className="text-lg font-medium text-foreground mb-1">
                       {getCurrentModel().name}
                     </Text>
                     <Text className="text-sm text-muted-foreground">
@@ -146,11 +143,8 @@ const Tools = () => {
               </Animated.View>
             </View>
           </View>
-
-          {/* Bottom padding */}
-          <View className="pb-4" />
         </View>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };

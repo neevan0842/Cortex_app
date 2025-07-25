@@ -31,7 +31,7 @@ const Settings = () => {
               Appearance
             </Text>
 
-            <View className="flex-row items-center justify-between py-5 px-5 rounded-2xl bg-muted-foreground/40 border border-border/50">
+            <View className="flex-row items-center justify-between gap-3 p-4 rounded-2xl bg-muted-foreground/40 border border-border">
               <View className="flex-row items-center flex-1">
                 <View className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center mr-2">
                   <Icon

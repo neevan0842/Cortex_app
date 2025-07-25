@@ -30,7 +30,7 @@ const ChatInput = ({
 
   return (
     <View className="p-4 border-t border-border bg-background pb-6">
-      <View className="flex-row items-center gap-3 p-3 rounded-2xl bg-muted/30 border border-border/50">
+      <View className="flex-row items-center gap-3 p-3 rounded-2xl bg-muted/30 border border-border">
         <Pressable>
           <Icon name="paperclip" size={20} color="#8E8E8E" />
         </Pressable>
