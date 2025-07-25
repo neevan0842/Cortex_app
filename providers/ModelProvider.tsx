@@ -27,13 +27,11 @@ export const ModelProvider = ({ children }: ModelProviderProps) => {
   const [llm, setLLM] = useState<any>(null); // TODO: Define llm type
   const [model, setModel] = useState<string>(ModelNames.DEFAULT);
   const [prompt, setPrompt] = useState<string>(PromptNames.DEFAULT);
-  const [isLoading, setIsLoading] = useState(true);
 
   // Load data from storage on app start
   useEffect(() => {
     const loadData = async () => {
       try {
-        setIsLoading(true);
         const savedModel = await AsyncStorage.getItem("model");
         const savedPrompt = await AsyncStorage.getItem("prompt");
 
@@ -42,8 +40,6 @@ export const ModelProvider = ({ children }: ModelProviderProps) => {
         console.log("loaded model:", savedModel, "prompt:", savedPrompt);
       } catch (error) {
         console.error("Error loading model:", error);
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -52,12 +48,10 @@ export const ModelProvider = ({ children }: ModelProviderProps) => {
 
   useEffect(() => {
     const updateModel = async () => {
-      setIsLoading(true);
       const modelInstance = getModelByName(model);
       await AsyncStorage.setItem("model", model);
       setLLM(modelInstance);
       console.log("ModelProvider - updating model:", model);
-      setIsLoading(false);
     };
     updateModel();
   }, [model]);
@@ -89,7 +83,7 @@ export const ModelProvider = ({ children }: ModelProviderProps) => {
     }
   };
 
-  return isLoading ? null : (
+  return (
     <ModelContext.Provider
       value={{
         model,

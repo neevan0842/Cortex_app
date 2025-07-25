@@ -42,11 +42,40 @@ export function getModelByName(modelName: string) {
 
 export enum ModelNames {
   DEFAULT = "llama-3.1-8b-instant",
-  GROQ_LLM_8B = "groq-llama-3.1-8b-instant",
-  GROQ_LLM_70B = "groq-llama-3.3-70b-versatile",
+  GROQ_LLM_8B = "llama-3.1-8b-instant",
+  GROQ_LLM_70B = "llama-3.3-70b-versatile",
   GEMINI_PRO = "gemini-2.5-pro",
   GEMINI_FLASH = "gemini-2.5-flash-lite",
 }
+
+export interface Model {
+  id: string;
+  name: string;
+  description: string;
+}
+
+export const AVAILABLE_MODELS: Model[] = [
+  {
+    id: ModelNames.GROQ_LLM_8B,
+    name: "Llama 3.1 8B (Groq)",
+    description: "Fast and efficient",
+  },
+  {
+    id: ModelNames.GROQ_LLM_70B,
+    name: "Llama 3.3 70B (Groq)",
+    description: "Most capable model",
+  },
+  {
+    id: ModelNames.GEMINI_PRO,
+    name: "Gemini 2.5 Pro (Google)",
+    description: "Advanced complex tasks",
+  },
+  {
+    id: ModelNames.GEMINI_FLASH,
+    name: "Gemini 2.5 Flash (Google)",
+    description: "Speed optimized",
+  },
+];
 
 export {
   geminiFlashModel,
