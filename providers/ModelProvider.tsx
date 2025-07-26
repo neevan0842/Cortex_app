@@ -37,7 +37,6 @@ export const ModelProvider = ({ children }: ModelProviderProps) => {
 
         setModel(savedModel || ModelNames.DEFAULT);
         setPrompt(savedPrompt || PromptNames.DEFAULT);
-        console.log("loaded model:", savedModel, "prompt:", savedPrompt);
       } catch (error) {
         console.error("Error loading model:", error);
       }
@@ -51,7 +50,6 @@ export const ModelProvider = ({ children }: ModelProviderProps) => {
       const modelInstance = getModelByName(model);
       await AsyncStorage.setItem("model", model);
       setLLM(modelInstance);
-      console.log("ModelProvider - updating model:", model);
     };
     updateModel();
   }, [model]);
@@ -59,7 +57,6 @@ export const ModelProvider = ({ children }: ModelProviderProps) => {
   useEffect(() => {
     const updatePrompt = async () => {
       await AsyncStorage.setItem("prompt", prompt);
-      console.log("ModelProvider - updating prompt:", prompt);
     };
     updatePrompt();
   }, [prompt]);
@@ -72,12 +69,6 @@ export const ModelProvider = ({ children }: ModelProviderProps) => {
       }
 
       const currentPrompt = await getPromptByName(prompt);
-      console.log(
-        "Generating response with model:",
-        model,
-        "and prompt:",
-        currentPrompt
-      );
       const response = await llm.invoke([
         { role: "system", content: currentPrompt },
         { role: "user", content: message.trim() },

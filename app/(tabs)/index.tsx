@@ -1,3 +1,4 @@
+import { convertSpeechToText, convertTextToSpeech } from "@/agent/model";
 import { useAgent } from "@/providers/ModelProvider";
 import {
   AudioModule,
@@ -212,18 +213,55 @@ const HomeScreen = () => {
     try {
       // The recording will be available on `audioRecorder.uri`.
       await audioRecorder.stop();
-      console.log("Audio recording stopped:", audioRecorder.uri);
 
       // Reset the finished flag for new playback
       hasFinishedRef.current = false;
 
       setConversationState("ai-speaking");
-      setCurrentTranscript("");
+      setCurrentTranscript("Transcribing...");
 
       // Replace the player source with the new recording
       if (audioRecorder.uri) {
-        player.replace(audioRecorder.uri);
-        player.play();
+        try {
+          // Use the transcription function from model.ts
+          const transcriptionText = await convertSpeechToText(
+            audioRecorder.uri
+          );
+
+          // Add user message to chat
+          const userMessage = {
+            id: messages.length + 1,
+            message: transcriptionText,
+            isUser: true,
+            timestamp: getCurrentTime(),
+          };
+          setMessages((prev) => [...prev, userMessage]);
+
+          // Get AI response
+          const aiResponseText = await generateLLMResponse(transcriptionText);
+
+          const aiResponse = {
+            id: messages.length + 2,
+            message: aiResponseText,
+            isUser: false,
+            timestamp: getCurrentTime(),
+          };
+          setMessages((prev) => [...prev, aiResponse]);
+
+          // Play back the original recording
+          const audioUri = await convertTextToSpeech(aiResponseText);
+          player.replace(audioUri);
+          player.play();
+
+          setCurrentTranscript("");
+        } catch (transcriptionError) {
+          console.error("Transcription error:", transcriptionError);
+          setCurrentTranscript("Transcription failed - playing audio only");
+
+          // Fallback: just play the audio without transcription
+          player.replace(audioRecorder.uri);
+          player.play();
+        }
       } else {
         console.error("No recording URI available");
         setConversationState("ready");
@@ -248,7 +286,6 @@ const HomeScreen = () => {
       (status) => {
         // Only trigger once per playback using the ref
         if (status.playbackState === "ended" && !hasFinishedRef.current) {
-          console.log("Audio finished via onPlaybackStatusUpdate");
           hasFinishedRef.current = true; // Prevent multiple triggers
           setConversationState("ready");
         }

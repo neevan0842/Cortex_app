@@ -55,8 +55,6 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     loadTheme();
   }, []);
 
-  console.log("ThemeProvider - currentTheme:", currentTheme);
-
   const toggleTheme = async () => {
     const newTheme = currentTheme === "light" ? "dark" : "light";
     setCurrentTheme(newTheme);
