@@ -28,7 +28,7 @@ interface MessageAreaProps {
 const MessageArea = ({
   messages,
   isTyping,
-  fontSize = 16,
+  fontSize = 15,
   mode,
   currentTranscript,
   conversationState,

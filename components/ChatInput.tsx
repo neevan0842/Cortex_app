@@ -15,7 +15,7 @@ const ChatInput = ({
   inputValue,
   onInputChange,
   onSend,
-  fontSize = 16,
+  fontSize = 15,
 }: ChatInputProps) => {
   const { theme } = useTheme();
 
