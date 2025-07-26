@@ -1,5 +1,8 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatGroq } from "@langchain/groq";
+import Groq from "groq-sdk";
+
+export const groq = new Groq({ apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY });
 
 const groqLlama8bModel = new ChatGroq({
   apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY,
