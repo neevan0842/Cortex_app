@@ -68,7 +68,7 @@ const MessageArea = ({
           <Icon name="user" size={16} color="#FAFAFA" />
         </View>
         <View className="max-w-[75%] space-y-1 items-end">
-          <View className="px-4 py-3 rounded-2xl rounded-br-md bg-primary/20 border-2 border-primary/30">
+          <View className="px-4 py-3 rounded-2xl rounded-br-md bg-primary/20 border-2 border-border">
             <Text
               className="leading-relaxed text-foreground"
               style={{ fontSize }}

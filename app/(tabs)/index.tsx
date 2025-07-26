@@ -1,5 +1,12 @@
 import { useAgent } from "@/providers/ModelProvider";
-import React, { useState } from "react";
+import {
+  AudioModule,
+  RecordingPresets,
+  setAudioModeAsync,
+  useAudioPlayer,
+  useAudioRecorder,
+} from "expo-audio";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -32,7 +39,7 @@ function TalkInput({ conversationState, onMicrophoneAction }: TalkInputProps) {
       case "listening":
         return "mic-off";
       case "ai-speaking":
-        return "volume-2";
+        return "square"; // Stop/interrupt icon
       default:
         return "mic";
     }
@@ -45,7 +52,7 @@ function TalkInput({ conversationState, onMicrophoneAction }: TalkInputProps) {
       case "listening":
         return "bg-red-500";
       case "ai-speaking":
-        return "bg-green-500 opacity-70";
+        return "bg-orange-500"; // Orange for interrupt action
       default:
         return "bg-primary";
     }
@@ -58,7 +65,7 @@ function TalkInput({ conversationState, onMicrophoneAction }: TalkInputProps) {
       case "listening":
         return "Speak clearly, tap when finished";
       case "ai-speaking":
-        return "AI is responding...";
+        return "AI is responding... Tap to interrupt";
       default:
         return "Ready for conversation";
     }
@@ -79,7 +86,6 @@ function TalkInput({ conversationState, onMicrophoneAction }: TalkInputProps) {
       <View className="items-center">
         <Pressable
           onPress={onMicrophoneAction}
-          disabled={conversationState === "ai-speaking"}
           className={cn(
             "w-16 h-16 rounded-full flex items-center justify-center shadow-lg",
             getButtonStyle()
@@ -111,6 +117,8 @@ type Message = {
 const HomeScreen = () => {
   const [mode, setMode] = useState<"chat" | "talk">("chat");
   const [fontSize, setFontSize] = useState(15);
+  const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+  const player = useAudioPlayer();
   const { generateLLMResponse } = useAgent();
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -128,6 +136,7 @@ const HomeScreen = () => {
     "ready" | "listening" | "ai-speaking"
   >("ready");
   const [currentTranscript, setCurrentTranscript] = useState("");
+  const hasFinishedRef = useRef(false);
 
   function getCurrentTime() {
     return new Date().toLocaleTimeString([], {
@@ -170,51 +179,84 @@ const HomeScreen = () => {
       startListening();
     } else if (conversationState === "listening") {
       startAIResponse();
+    } else if (conversationState === "ai-speaking") {
+      interruptAIResponse();
     }
   };
 
-  const startListening = () => {
+  const startListening = async () => {
     setConversationState("listening");
     setCurrentTranscript("Listening...");
+    try {
+      const status = await AudioModule.requestRecordingPermissionsAsync();
+      if (!status.granted) {
+        console.warn("Permission to access microphone not granted");
+        setConversationState("ready");
+        return;
+      }
 
-    setTimeout(() => {
-      setCurrentTranscript("Hello, I have a question about...");
-    }, 1500);
-
-    setTimeout(() => {
-      setCurrentTranscript(
-        "Hello, I have a question about machine learning and how it works..."
-      );
-    }, 3000);
-  };
-
-  const startAIResponse = () => {
-    if (currentTranscript && currentTranscript !== "Listening...") {
-      const userMessage = {
-        id: messages.length + 1,
-        message: currentTranscript,
-        isUser: true,
-        timestamp: getCurrentTime(),
-      };
-      setMessages((prev) => [...prev, userMessage]);
-    }
-
-    setConversationState("ai-speaking");
-    setCurrentTranscript("");
-
-    const aiResponse = {
-      id: messages.length + 2,
-      message:
-        "Great question! Machine learning is a subset of artificial intelligence that enables computers to learn and make decisions from data without being explicitly programmed for every scenario.",
-      isUser: false,
-      timestamp: getCurrentTime(),
-    };
-    setMessages((prev) => [...prev, aiResponse]);
-
-    setTimeout(() => {
+      setAudioModeAsync({
+        playsInSilentMode: true,
+        allowsRecording: true,
+      });
+      await audioRecorder.prepareToRecordAsync();
+      audioRecorder.record();
+    } catch (error) {
+      console.error("Error preparing audio recorder:", error);
       setConversationState("ready");
-    }, 4000);
+      return;
+    }
   };
+
+  const startAIResponse = async () => {
+    try {
+      // The recording will be available on `audioRecorder.uri`.
+      await audioRecorder.stop();
+      console.log("Audio recording stopped:", audioRecorder.uri);
+
+      // Reset the finished flag for new playback
+      hasFinishedRef.current = false;
+
+      setConversationState("ai-speaking");
+      setCurrentTranscript("");
+
+      // Replace the player source with the new recording
+      if (audioRecorder.uri) {
+        player.replace(audioRecorder.uri);
+        player.play();
+      } else {
+        console.error("No recording URI available");
+        setConversationState("ready");
+      }
+    } catch (error) {
+      setConversationState("ready");
+      console.error("Error starting AI response:", error);
+      return;
+    }
+  };
+
+  const interruptAIResponse = () => {
+    player.pause();
+    setConversationState("ready");
+    setCurrentTranscript("");
+  };
+
+  // Replace the existing useEffect with this corrected version
+  useEffect(() => {
+    const statusSubscription = player.addListener(
+      "playbackStatusUpdate",
+      (status) => {
+        // Only trigger once per playback using the ref
+        if (status.playbackState === "ended" && !hasFinishedRef.current) {
+          console.log("Audio finished via onPlaybackStatusUpdate");
+          hasFinishedRef.current = true; // Prevent multiple triggers
+          setConversationState("ready");
+        }
+      }
+    );
+
+    return () => statusSubscription.remove();
+  }, [player]);
 
   return (
     <SafeAreaView className="flex-1 bg-background">
