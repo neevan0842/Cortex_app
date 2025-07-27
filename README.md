@@ -2,7 +2,9 @@
 
 A conversational AI assistant built with React Native and Expo. Chat via text or voice with persistent conversation memory.
 
-![App Screenshot](./docs/screenshot.png)
+| <img src="./static/l1.jpg" width="250" height="500" alt="Light Chat"> | <img src="./static/l2.jpg" width="250" height="500" alt="Light Voice"> | <img src="./static/l3.jpg" width="250" height="500" alt="Light Settings"> |
+
+| <img src="./static/d1.jpg" width="250" height="500" alt="Dark Chat"> | <img src="./static/d2.jpg" width="250" height="500" alt="Dark Voice"> | <img src="./static/d3.jpg" width="250" height="500" alt="Dark Settings"> |
 
 ## Features
 
