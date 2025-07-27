@@ -6,10 +6,16 @@ import Icon from "react-native-vector-icons/Feather";
 interface HeaderProps {
   mode: "chat" | "talk";
   onModeSwitch: () => void;
+  onClearConversation?: () => void;
   conversationState?: "ready" | "listening" | "ai-speaking";
 }
 
-const Header = ({ mode, onModeSwitch, conversationState }: HeaderProps) => {
+const Header = ({
+  mode,
+  onModeSwitch,
+  onClearConversation,
+  conversationState,
+}: HeaderProps) => {
   const { theme } = useTheme();
   const getStatusText = () => {
     if (mode === "talk" && conversationState) {
@@ -45,27 +51,38 @@ const Header = ({ mode, onModeSwitch, conversationState }: HeaderProps) => {
         </View>
       </View>
 
-      <Pressable
-        onPress={onModeSwitch}
-        className="flex-row items-center gap-2 px-4 py-2 rounded-full shadow-lg"
-        style={{
-          backgroundColor: mode === "chat" ? "#22C55E" : "#EF4444",
-          shadowColor: mode === "chat" ? "#22C55E" : "#EF4444",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 8,
-          elevation: 6,
-        }}
-      >
-        <Icon
-          name={mode === "chat" ? "phone" : "message-circle"}
-          size={14}
-          color="#FFFFFF"
-        />
-        <Text className="text-sm font-bold text-white">
-          {mode === "chat" ? "Talk" : "Chat"}
-        </Text>
-      </Pressable>
+      <View className="flex-row items-center gap-2">
+        {onClearConversation && (
+          <Pressable
+            onPress={onClearConversation}
+            className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center"
+          >
+            <Icon name="trash-2" size={16} color="#EF4444" />
+          </Pressable>
+        )}
+
+        <Pressable
+          onPress={onModeSwitch}
+          className="flex-row items-center gap-2 px-4 py-2 rounded-full shadow-lg"
+          style={{
+            backgroundColor: mode === "chat" ? "#22C55E" : "#EF4444",
+            shadowColor: mode === "chat" ? "#22C55E" : "#EF4444",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 8,
+            elevation: 6,
+          }}
+        >
+          <Icon
+            name={mode === "chat" ? "phone" : "message-circle"}
+            size={14}
+            color="#FFFFFF"
+          />
+          <Text className="text-sm font-bold text-white">
+            {mode === "chat" ? "Talk" : "Chat"}
+          </Text>
+        </Pressable>
+      </View>
     </View>
   );
 };

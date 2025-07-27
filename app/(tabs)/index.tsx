@@ -27,7 +27,7 @@ const HomeScreen = () => {
   const [mode, setMode] = useState<"chat" | "talk">("chat");
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const player = useAudioPlayer();
-  const { generateLLMResponse } = useAgent();
+  const { generateLLMResponse, clearConversation, getConversationHistory } = useAgent();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -53,8 +53,63 @@ const HomeScreen = () => {
     });
   }
 
+  // Load conversation history on component mount
+  useEffect(() => {
+    const loadConversationHistory = () => {
+      const history = getConversationHistory();
+      
+      if (history.length > 0) {
+        // Convert conversation history to Message format
+        const convertedMessages: Message[] = [];
+        
+        // Add welcome message first
+        convertedMessages.push({
+          id: 1,
+          message: "Hello! I'm your AI companion. How can I help you today?",
+          isUser: false,
+          timestamp: getCurrentTime(),
+        });
+
+        // Convert and add history messages (skip system messages)
+        history.forEach((msg, index) => {
+          if (msg.role !== "system") {
+            convertedMessages.push({
+              id: convertedMessages.length + 1,
+              message: msg.content,
+              isUser: msg.role === "user",
+              timestamp: msg.timestamp ? 
+                new Date(msg.timestamp).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }) : getCurrentTime(),
+            });
+          }
+        });
+
+        setMessages(convertedMessages);
+      }
+    };
+
+    loadConversationHistory();
+  }, [getConversationHistory]);
+
   const toggleMode = () => {
     setMode(mode === "chat" ? "talk" : "chat");
+  };
+
+  const handleClearConversation = () => {
+    // Clear local messages
+    setMessages([
+      {
+        id: 1,
+        message: "Hello! I'm your AI companion. How can I help you today?",
+        isUser: false,
+        timestamp: getCurrentTime(),
+      },
+    ]);
+    
+    // Clear conversation history in ModelProvider
+    clearConversation();
   };
 
   const handleSend = async () => {
@@ -72,9 +127,12 @@ const HomeScreen = () => {
     setIsTyping(true);
     Keyboard.dismiss();
 
+    // Get AI response (this will automatically add both messages to conversation history)
+    const aiResponseText = await generateLLMResponse(inputValue.trim());
+    
     const aiResponse = {
       id: messages.length + 2,
-      message: await generateLLMResponse(inputValue.trim()),
+      message: aiResponseText,
       isUser: false,
       timestamp: getCurrentTime(),
     };
@@ -144,7 +202,7 @@ const HomeScreen = () => {
           };
           setMessages((prev) => [...prev, userMessage]);
 
-          // Get AI response
+          // Get AI response (this will automatically add both messages to conversation history)
           const aiResponseText = await generateLLMResponse(transcriptionText);
 
           const aiResponse = {
@@ -155,7 +213,7 @@ const HomeScreen = () => {
           };
           setMessages((prev) => [...prev, aiResponse]);
 
-          // Play back the original recording
+          // Play back the AI response as speech
           const audioUri = await convertTextToSpeech(aiResponseText);
           player.replace(audioUri);
           player.play();
@@ -209,6 +267,7 @@ const HomeScreen = () => {
         <Header
           mode={mode}
           onModeSwitch={toggleMode}
+          onClearConversation={handleClearConversation}
           conversationState={mode === "talk" ? conversationState : undefined}
         />
 
