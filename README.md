@@ -1,50 +1,79 @@
-# Welcome to your Expo app 👋
+# Cortex AI Assistant
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A conversational AI assistant built with React Native and Expo. Chat via text or voice with persistent conversation memory.
 
-## Get started
+![App Screenshot](./docs/screenshot.png)
 
-1. Install dependencies
+## Features
+
+- **Text Chat** - Type and get AI responses
+- **Voice Chat** - Speak naturally, get spoken responses
+- **Memory** - Conversations persist across sessions
+- **Cross-Platform** - iOS, Android, and Web
+- **Dark/Light Theme** - Automatic theme switching
+
+## Tech Stack
+
+- React Native + Expo
+- TypeScript
+- Groq API (Speech-to-Text, Text-to-Speech, LLM)
+- Google Gemini AI
+- LangChain
+- AsyncStorage for persistence
+- NativeWind for styling
+
+## Setup
+
+### Installation
+
+1. **Clone and install**
 
    ```bash
+   git clone https://github.com/neevan0842/Cortex_app.git
+   cd Cortex_app
    npm install
    ```
 
-2. Start the app
+2. **Environment setup**
 
    ```bash
-   npx expo start
+   # Create .env file from sample
+   cp .env.sample .env
+
+   # Add your API keys
+   EXPO_PUBLIC_GROQ_API_KEY=your_groq_api_key_here
+   EXPO_PUBLIC_GOOGLE_API_KEY=your_google_api_key_here
+   EXPO_PUBLIC_LANGSMITH_API_KEY=your_langsmith_api_key_here
+   EXPO_PUBLIC_LANGCHAIN_TRACING_V2=true
+   EXPO_PUBLIC_LANGCHAIN_PROJECT=cortex-cli-chat
    ```
 
-In the output, you'll find options to open the app in a
+   ⚠️ **Security Warning**: These API keys are for personal development use only. For production builds, never expose API keys in client-side code. Use a secure backend service to handle API calls and keep keys server-side.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+3. **Start development**
+   ```bash
+   npm start
+   ```
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Usage
 
-## Get a fresh project
+### Text Mode
 
-When you're ready, run:
+- Type messages in the input field
+- AI responds with conversation context
 
-```bash
-npm run reset-project
-```
+### Voice Mode
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- Tap microphone to start recording
+- Tap again to stop and get AI response
+- Tap during AI speech to interrupt
 
-## Learn more
+### Memory
 
-To learn more about developing your project with Expo, look at the following resources:
+- Conversations auto-save
+- Tap trash icon to clear history
+- Memory persists app restarts
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## License
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+MIT License - see [LICENSE](./LICENSE) file for details.
