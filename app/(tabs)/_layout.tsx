@@ -58,6 +58,7 @@ export default function TabLayout() {
         },
         tabBarActiveTintColor: "transparent",
         tabBarInactiveTintColor: "transparent",
+        tabBarHideOnKeyboard: true,
         tabBarButton: (props) => {
           const { children, onPress, accessibilityState, ...restProps } = props;
           return (
