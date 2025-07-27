@@ -55,6 +55,16 @@ A conversational AI assistant built with React Native and Expo. Chat via text or
    npm start
    ```
 
+## Build & Deploy
+
+```bash
+npx -y expo-doctor
+npm install -g eas-cli
+eas login
+eas build:configure
+eas build --platform android --profile production
+```
+
 ## Usage
 
 ### Text Mode
