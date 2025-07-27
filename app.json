@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Cortex_app",
-    "slug": "Cortex_app",
+    "name": "Cortex",
+    "slug": "Cortex",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/cortex_icon.png",
